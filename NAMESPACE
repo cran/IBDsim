@@ -1,0 +1,2 @@
+export(IBDsim)
+useDynLib("IBDsim")
