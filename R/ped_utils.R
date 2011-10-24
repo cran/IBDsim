@@ -1,6 +1,7 @@
-.findCAFs <-
-function(x, ones, twos, loops = NULL) {  #common ancestral founders
-    caf <- fou <- x$founders 
+.CAFs <-
+function(x, sap, loops = NULL) {  #common ancestral founders
+    zeros = sap[['0']]; ones = c(sap[['1']], sap[['atleast1']]); twos = sap[['2']]
+	caf <- fou <- setdiff(x$founders, zeros) 
 	fou_one = intersect(fou, ones)
 	if (length(fou_one) > 1 || any(twos %in% fou)) return(numeric()) #since founders always have different alleles (by definition)
 	
@@ -24,52 +25,48 @@ function(x, ones, twos, loops = NULL) {  #common ancestral founders
 }
 
 
-obligate.carriers = function(x, sap) {
-	one = c(sap[['1']], sap[['atleast1']]); two = sap[['2']]
-	loops = pedigreeLoops(x)
-	bottoms = sapply(loops, '[[', 'bottom')
-	tops = sapply(loops, '[[', 'top')
-	if(any(one %in% bottoms)) stop("Inbred individual carrying 1 allele: Not implemented yet.")
-	singleloop=function(inb, caf) {
-		loop = loops[(bottoms == inb) & (tops == caf)]
-		if(length(loop) != 1 ) stop("No loop, or more than one loop. Problem!")	
-		loop=loop[[1]]
-		c(loop[['top']], loop[['pathA']], loop[['pathB']])
+.pedPaths = function(x, from, to)  {
+	paths = list()
+	leaves = seq_len(x$nInd)[ - x$pedigree[, c('FID','MID')] ]
+	
+	descend = function(x, from, to, path) {
+	  if(from==to) {paths <<- c(paths, list(path)); return()}
+	  if(from %in% leaves) return()
+	  offs = offspring(x, from, original.id=FALSE)
+	  for (kid in offs) descend(x, from=kid, to=to, path=c(path, kid))
 	}
-	cafs = .findCAFs(x, one, two, loops)
-	caf_descpaths = paramlink:::.descentPaths(x, cafs, original.id=FALSE)
-	
-	#---non-inbred 'one' individuals: For each CAF there are no choices here---
-	noninb_ones = setdiff(one, bottoms)
-	obligate = lapply(cafs, function(caf) {
-		paths = caf_descpaths[[match(caf, cafs)]]
-		obl = sap[['1']] #initialize.
-		for(id in noninb_ones) obl = c(obl, unlist(lapply(paths, function(pth) pth[seq_len(match(id, pth, nomatch=1)-1)])))
-		for (inb in two) obl = c(obl, singleloop(inb, caf))
-		sort.default(unique(obl))
+	descend(x, from, to, path=from)
+	paths
+}
+
+obligate.carriers = function(x, sap) {
+	cafs = .CAFs(x, sap)
+	cafPaths = lapply(cafs, function(caf) {
+		onePaths = lapply(c(sap[['1']], sap[['atleast1']]), function(id) .pedPaths(x, from=caf, to=id))
+		twoPaths = lapply(sap[['2']], function(id) {
+			paths = .pedPaths(x, from=caf, to=id)
+			temp = list()
+			for(i in 1:nrow(loop_pairs <- paramlink:::.comb2(length(paths)))) {
+				p1 = paths[[loop_pairs[i,1]]]; p2 = paths[[loop_pairs[i,2]]]
+				if(p1[length(p1) - 1] != p2[length(p2) - 1])  #true loop only if both parents of 'two' are included
+					temp = c(temp, list(c(p1, p2)))
+			}
+			temp
+		}) #twoLoops for this CAF is a list of |two| elements: For each two-ID the list of possible loops from CAF to ID 
+		allcomb = expand.grid(c(twoPaths, onePaths)) #each row here consists of one of each
+		lapply(1:nrow(allcomb), function(i) sort.default(unique(unlist(allcomb[i,]))))
 	})
-	setdiff(obligate, sap[['atleast1']])  #return list of vectors: these are the sample space for the '1'-element of the condition sap.
-}
-	
-
-.whichIndivsIBD <-
-function(x, share) {
-	if (is.null(x$model)) chrom="AUTOSOMAL" else chrom=x$model$chrom
-	if (is.null(x$sim)) sim=rep.int(2, x$nInd) else sim=x$sim
-	
-	if (is.character(share) && share %in% c("sim", "disease"))
-		switch(chrom, 
-		 "AUTOSOMAL" = {share = which(sim==2 & x$pedigree[,'AFF']==2); nonshare = which(sim==2 & x$pedigree[,'AFF']==1)},
-		 "X" = {share = which(sim==2 & x$pedigree[,'SEX']==1 & x$pedigree[,'AFF']==2); nonshare = which(sim==2 & x$pedigree[,'SEX']==1 & x$pedigree[,'AFF']==1)}
-		)
-	else if (is.list(share) & length(share)==2) {share.list = share; share=share.list[[1]]; nonshare=share.list[[2]]}
-	else if (is.numeric(share)) nonshare=numeric()
-	return(list(yes=share, no=nonshare))
+	obligs = unique(unlist(cafPaths, recursive=F))
+	obligs = lapply(obligs, setdiff, c(sap[['atleast1']], sap[['2']]))
+	obligs = obligs[sapply(obligs, function(vec) !any(sap[['0']] %in% vec))] #and paths containing 0-indivs
+	if(length(obligs)==0) stop("Hmm, I can't find any possible sets of obligate carriers.")
+	keep = lapply(seq_len(length(obligs)), function(i) {
+		for(other in obligs[-i]) if (all(other %in% obligs[[i]])) return(FALSE)
+		return(TRUE)
+	})
+	obligs[unlist(keep)]
 }
 
-	
-	
-	
 inbreeding = function(x) {
 	ped = x$pedigree
 	kin.coeff = kinship(id=ped[,'ID'], father.id=ped[,'FID'], mother.id=ped[,'MID'])
