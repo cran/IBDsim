@@ -47,8 +47,8 @@ function(x, sap) {#x a list of haplo-objects (i.e. each element is a list of two
 }
 
 
-.getAlleles = function(chrom, posvec) {
-	str1 = chrom[[1]]; str2 = chrom[[2]]
+.getAlleles = function(chromdata, posvec) {
+	str1 = chromdata[[1]]; str2 = chromdata[[2]]
 	posvec[posvec<0]=0
 	x = as.double(posvec)
 	nx <- length(x)

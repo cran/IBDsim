@@ -12,7 +12,7 @@ function(x, map, condition=NULL, model="chi", skip.recomb=NULL) { #x=linkdat obj
 		else if(chrom=="X")
 			for (i in x$nonfounders) {
 				father = ped[i, 'FID']; mother = ped[i, 'MID']
-				maternal.gamete = meiosis(h[[mother]], map=map$female, model=model, skip=mother %in% skip.recomb)
+				maternal.gamete = meiosis(h[[mother]], map=map$female, model=model, skip.recomb=mother %in% skip.recomb)
 				if(ped[i,'SEX']==1) 	h[[i]] = list(maternal.gamete, maternal.gamete)
 				else					h[[i]] = list(h[[father]][[1]], maternal.gamete)
 			}	

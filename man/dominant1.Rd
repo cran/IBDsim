@@ -7,7 +7,7 @@ Autosomal dominant pedigree
 \description{
 A three generation pedigree affected with an autosomal dominant disorder.
 }
-\usage{data(twoloops)}
+\usage{data(dominant1)}
 \format{
 A data frame describing the pedigree in standard LINKAGE format (i.e. the columns are: Family ID, individual ID, father, mother, sex, affection status).
 }

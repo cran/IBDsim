@@ -117,7 +117,7 @@ plot(x)
 sap1 = list('2'=15:16, 'atmost1'=17)
 IBDsim(x, sims=10, condition=sap1, query=sap1)
 
-# If 16 is unavailable, his parents and healthy sib are still 
+# If 16 is unavailable, his parents and healthy sibling are still 
 # informative. The regions we are looking for now are those with 
 # an allele present in 2 copies in 15, 1 copy in 12 and 14, and 
 # at most one in 17. Note that the condition SAP remains as above.

@@ -27,7 +27,7 @@ function(segments, merged=TRUE) {
 			else {
 				disrun = run[dis, ]
 				dis.length = as.numeric(disrun['end']-disrun['start'])
-				stats = c(stats, length.dis = dis.length, rank.dis =rank(-c(dis.length, all.lengths), ties="first")[1])
+				stats = c(stats, length.dis = dis.length, rank.dis =rank(-c(dis.length, all.lengths), ties.method="first")[1])
 			}
 		}
 		stats

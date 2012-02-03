@@ -10,7 +10,7 @@ function(x, sap, loops = NULL) {  #common ancestral founders
 	if(length(twos)>0) {
 		.ancestral.founders = function(id)	if (id %in% fou) return(id) else fou[sapply(fou_desc, function(ds) id %in% ds)]
 		if(is.null(loops)) loops = pedigreeLoops(x)
-		if(length(loops) == 0) return(numeric())  #NB: 1)pedigreeLoops bruker originale ids 2) veldig ineffektivt (men selv telemark går noen sekunder)
+		if(length(loops) == 0) return(numeric())  #NB: 1)pedigreeLoops bruker originale ids 2) veldig ineffektivt (men selv telemark går på noen sekunder)
 		bottoms = sapply(loops, '[[', 'bottom') 
 		tops = sapply(loops, '[[', 'top')
 		for (bot in twos) caf = intersect(caf, unlist(lapply(tops[bottoms==bot], .ancestral.founders)))
@@ -69,7 +69,7 @@ obligate.carriers = function(x, sap) {
 
 inbreeding = function(x) {
 	ped = x$pedigree
-	kin.coeff = kinship(id=ped[,'ID'], father.id=ped[,'FID'], mother.id=ped[,'MID'])
+	kin.coeff = kinship(id=ped[,'ID'], dadid=ped[,'FID'], momid=ped[,'MID'])
 	inb.coeff = numeric()
 	inb.coeff[x$founders] = 0
 	inb.coeff[x$nonfounders] = sapply(x$nonfounders, function(i) kin.coeff[ped[i, 'FID'], ped[i, 'MID']])

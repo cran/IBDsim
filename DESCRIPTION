@@ -1,8 +1,8 @@
 Package: IBDsim
 Type: Package
 Title: Simulation of chromosomal regions shared by family members.
-Version: 0.8
-Date: 2011-10-24
+Version: 0.9-1
+Date: 2012-02-03
 Author: Magnus Dehli Vigeland
 Maintainer: <magnusdv@medisin.uio.no>
 Description: R package for simulation of IBD sharing among family
@@ -13,9 +13,9 @@ Description: R package for simulation of IBD sharing among family
         Regions compatible with the query IBD pattern (possibly
         different from the conditional pattern) are subsequently
         detected and summarized.
-Depends: R (>= 2.12), paramlink
+Depends: R (>= 2.12), paramlink (>= 0.6-1)
 License: GPL (>= 2)
 LazyLoad: yes
-Packaged: 2011-10-24 08:57:08 UTC; magnusdv
+Packaged: 2012-02-03 10:22:03 UTC; magnusdv
 Repository: CRAN
-Date/Publication: 2011-10-24 13:37:34
+Date/Publication: 2012-02-03 11:35:04

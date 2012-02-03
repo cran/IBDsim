@@ -14,12 +14,14 @@ function(x, sims, query=NULL, condition=NULL, map="decode", chromosomes=1:22, mo
 		}
 		else {dischr=rep.int(0, sims)}
 	
-		if(skip.recomb=="noninf_founders") {
-			cafs = x$founders; if(!is.null(condition)) cafs = intersect(cafs, .CAFs(x,condition)); if(!is.null(query)) cafs = intersect(cafs, .CAFs(x,query))
-			skip.recomb = setdiff(x$founders, cafs)
+		if(!is.null(skip.recomb)) {
+			if(skip.recomb=="noninf_founders") {
+				cafs = x$founders; if(!is.null(condition)) cafs = intersect(cafs, .CAFs(x,condition)); if(!is.null(query)) cafs = intersect(cafs, .CAFs(x,query))
+				skip.recomb = setdiff(x$founders, cafs)
+			}
 			if (length(skip.recomb)>0) cat("Skipping recombination in the following individuals:", paste(skip.recomb, collapse=", "),"\n")
 		}
-		
+
 		simdata = lapply(1:sims, function(i) 
 			lapply(map, function(m) {
 				if(dischr[sims]==attr(m, 'chromosome')) cond=oblig.saps[[i]] else cond=NULL 
@@ -66,7 +68,5 @@ sample.obligates = function(x, condition, sims) {
 	cat("\n")
 }
 
-.prettycat = function(v, andor) {
-	len <- length(v)
-	switch(min(len, 3), toString(v), paste(v, collapse=" and "), paste(paste(v[-len], collapse=", "), andor, v[len]))
-}
+.prettycat = function(v, andor)
+	switch(min(len <- length(v), 3), toString(v), paste(v, collapse=" and "), paste(paste(v[-len], collapse=", "), andor, v[len]))
