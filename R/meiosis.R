@@ -41,4 +41,4 @@ function(parent, map, model="chi", condition=NULL, skip.recomb=FALSE) { #skip=TR
 }
 
 
-.sortDouble = function(x) .Internal(qsort(x, FALSE))
+.sortDouble = function(x) x[order(x)] #.Internal(qsort(x, FALSE))

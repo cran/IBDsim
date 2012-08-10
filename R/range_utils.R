@@ -1,37 +1,37 @@
 rangeUnion <-
 function(x) {
-  nrws = .Internal(unlist(lapply(x, length), TRUE, FALSE))/2
+  nrws = unlist(lapply(x, length), recursive=TRUE, use.names=FALSE)/2
   if (sum(nrws)==0) return(matrix(numeric(0), ncol=2))
   
   n = length(nrws)
-  vec = .Internal(unlist(x, recursive=TRUE, use.names=FALSE))
+  vec = unlist(x, recursive=TRUE, use.names=FALSE)
   startstop = rep.int(rep.int(c(1,-1), n), rep.int(nrws, rep.int(2,n))) #1 = interval start; -1 = interval stop
   extvec = vec - startstop*1e-6 #extend all regions by 1bp in both directions (to count consecutive regions as overlapping) 
   
-  ord = .Internal(order(TRUE, FALSE, extvec, startstop)) #NB: in rangeIntersect this must be '-startstop'
+  ord = order(extvec, startstop, na.last=TRUE, decreasing=FALSE) #NB: in rangeIntersect this must be '-startstop'
   m = extvec[ord]
   startstop.ord = startstop[ord]
   
   #print(cbind(m,startstop.ord,cumsum(startstop.ord)))  #look at this to understand.
-  ind.end = .Internal(which(cumsum(startstop.ord) == 0))
+  ind.end = seq_along(ord)[cumsum(startstop.ord) == 0]
   ind.start = c(1, ind.end[-length(ind.end)] + 1)
   cbind(m[ind.start]+1e-6, m[ind.end]-1e-6, deparse.level=0)
 }
 
 rangeIntersect <-
 function(x) {
-  nrws = .Internal(unlist(lapply(x, length), TRUE, FALSE))/2
+  nrws = unlist(lapply(x, length), recursive=TRUE, use.names=FALSE)/2
   if (sum(nrws)==0) return(matrix(numeric(0), ncol=2))
   
   n = length(nrws)
-  vec = .Internal(unlist(x, recursive=TRUE, use.names=FALSE))
+  vec = unlist(x, recursive=TRUE, use.names=FALSE)
   startstop = rep.int(rep.int(c(1,-1), n), rep.int(nrws, rep.int(2,n)))
 
-  ord = .Internal(order(TRUE, FALSE, vec, -startstop))
+  ord = order(vec, -startstop, na.last=TRUE, decreasing=FALSE)
   m = vec[ord]
   startstop.ord = startstop[ord]
 
-  ind.start = .Internal(which(cumsum(startstop.ord)==n))
+  ind.start = seq_along(vec)[cumsum(startstop.ord)==n]
   ind.end = ind.start+1
   cbind(m[ind.start], m[ind.end], deparse.level=0)
 }
@@ -53,5 +53,3 @@ function(m, endpoint) { #m a matrix with columns start & end
   res = cbind(newstart,newend, deparse.level=0)
   res[res[, 1] < res[, 2], ]
 }
-
-

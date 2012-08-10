@@ -50,21 +50,15 @@ function(x, sap) {#x a list of haplo-objects (i.e. each element is a list of two
 .getAlleles = function(chromdata, posvec) {
 	str1 = chromdata[[1]]; str2 = chromdata[[2]]
 	posvec[posvec<0]=0
-	x = as.double(posvec)
-	nx <- length(x)
-    index2 <- integer(nx)
-	.C("find_interv_vec", xt <- as.double(str1[,1]), n = length(xt), x = x, nx = nx, 
-	FALSE, FALSE, index1 <- integer(nx), DUP = FALSE, NAOK = TRUE, PACKAGE = "base")
-	.C("find_interv_vec", xt <- as.double(str2[,1]), n = length(xt), x = x, nx = nx, 
-	FALSE, FALSE, index2 <- integer(nx), DUP = FALSE, NAOK = TRUE, PACKAGE = "base")
-	rbind(str1[index1, 2], str2[index2, 2])
+	#x = as.double(posvec)
+	#nx <- length(x)
+   #index2 <- integer(nx)
+	#.C("find_interv_vec", xt <- as.double(str1[,1]), n = length(xt), x = x, nx = nx, 
+	#FALSE, FALSE, index1 <- integer(nx), DUP = FALSE, NAOK = TRUE, PACKAGE = "base")
+	#.C("find_interv_vec", xt <- as.double(str2[,1]), n = length(xt), x = x, nx = nx, 
+	#FALSE, FALSE, index2 <- integer(nx), DUP = FALSE, NAOK = TRUE, PACKAGE = "base")
+	index1 = findInterval(posvec, str1[,1])
+   index2 = findInterval(posvec, str2[,1])
+   rbind(str1[index1, 2], str2[index2, 2])
 }
-		
-.getAlleles_old <-
-function(seqObj, pos) {#seqObj is list of two one matrices (for each strand). Cols: pos, allele
-	str1 = seqObj[[1]]; str2 = seqObj[[2]]
-	c(str1[match(TRUE, pos < str1[, 1], nomatch = nrow(str1)+1) - 1, 2], 
-	  str2[match(TRUE, pos < str2[, 1], nomatch = nrow(str2)+1) - 1, 2])
-}
-
 

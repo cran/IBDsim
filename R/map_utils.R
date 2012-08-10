@@ -54,18 +54,19 @@ function(cM_locus, mapmat) {	# mapmat matrise med kolonner 'Mb' og 'cM'
 	res = numeric(length(cM_locus))
 	res[!nontriv] <- NA
 	cm <- cM_locus[nontriv]
-	interv = .findInterval_quick(cm, mapmat[, 'cM'], all.inside=TRUE)
+	interv = findInterval(cm, mapmat[, 'cM'], all.inside=TRUE) #.findInterval_quick not allowed
 	res[nontriv] = mapmat[interv, 'Mb'] + (mapmat[interv+1, 'Mb'] - mapmat[interv, 'Mb']) * (cm - mapmat[interv, 'cM'])/(mapmat[interv+1, 'cM'] - mapmat[interv, 'cM'])
 	res
 }
 
-.findInterval_quick = function(x, vec, all.inside=FALSE) {
-    nx <- length(x)
-    .C("find_interv_vec", xt = as.double(vec), n = length(vec), 
-        x = as.double(x), nx = nx, FALSE, 
-        as.logical(all.inside), index = integer(nx), DUP = FALSE, NAOK = TRUE, 
-        PACKAGE = "base")$index
-}
+# Not allowed:
+# .findInterval_quick = function(x, vec, all.inside=FALSE) {
+    # nx <- length(x)
+    # .C("find_interv_vec", xt = as.double(vec), n = length(vec), 
+        # x = as.double(x), nx = nx, FALSE, 
+        # as.logical(all.inside), index = integer(nx), DUP = FALSE, NAOK = TRUE, 
+        # PACKAGE = "base")$index
+# }
 
 .genmapC <-
 function(cM, mapmat) {	# mapmat matrise med kolonner 'pos' og 'cM'   ###NB gammel!!
