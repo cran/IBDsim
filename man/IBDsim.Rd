@@ -10,7 +10,7 @@ This is the main function of the package. Gene dropping of chromosomes is simula
 \usage{
 IBDsim(x, sims, query=NULL, condition=NULL, map="decode", 
        chromosomes=1:22, model="chi", merged=TRUE, simdata=NULL, 
-       skip.recomb = "noninf_founders")
+       skip.recomb = "noninf_founders", verbose=TRUE)
 }
 \arguments{
   \item{x}{
@@ -39,6 +39,9 @@ Either NULL, in which case simulation of sequence data is done before collecting
 }
   \item{skip.recomb}{
 a numeric containing individuals whose meioses should be simulated without recombination (i.e. a random strand is passed on to each offspring). If NULL, nobody is skipped. The default value (the character "noninf_founders") computes the set of pedigree founders that cannot be carriers of the alleles described in the \code{condition} and/or \code{query} SAPs. 
+}
+  \item{verbose}{
+a logical
 }
 }
 \details{
@@ -104,9 +107,11 @@ Zhao, H., Speed, T. P., McPeek, M. S. (1995) Statistical analysis of crossover i
 Magnus Dehli Vigeland
 }
 \examples{
+# In all examples below, the 'sims' parameter is set to 1 to 
+# decrease runtime. For realistic results increase to e.g. 1000.
+
 #### An example with a recessive disease in a consanguineous pedigree:
 
-data(twoloops)
 x = linkdat(twoloops)
 plot(x)
 
@@ -115,30 +120,27 @@ plot(x)
 # follows:
 
 sap1 = list('2'=15:16, 'atmost1'=17)
-IBDsim(x, sims=10, condition=sap1, query=sap1)
-
+IBDsim(x, sims=1, condition=sap1, query=sap1)
 # If 16 is unavailable, his parents and healthy sibling are still 
 # informative. The regions we are looking for now are those with 
 # an allele present in 2 copies in 15, 1 copy in 12 and 14, and 
 # at most one in 17. Note that the condition SAP remains as above.
 
-IBDsim(x, sims=10, condition=sap1, 
+IBDsim(x, sims=1, condition=sap1, 
        query=list('2'=15, '1'=c(12,14), 'atmost1'=17))
 
 	   
 #### Example with an autosomal dominant disorder:
-
-data(dominant1)
-y = linkdat(dominant1)
+y = linkdat(dominant1) # lazy load data
 plot(y)
 
 # Suppose a 20 Mb linkage peak is found. 
 # How often would this occur by chance?
 
-aff=which(dominant1[,'AFF']==2)   # the affected
-nonaff=which(dominant1[,'AFF']==1)   # the non-affected
+aff = which(dominant1[,'AFF']==2)   # the affected
+nonaff = which(dominant1[,'AFF']==1)   # the non-affected
 dom_pattern = list('1'=aff, '0'=nonaff)
-res = IBDsim(y, sims=10, query=dom_pattern)  #increase 'sims'!
+res = IBDsim(y, sims=1, query=dom_pattern) 
 mean(res$stats['longest.all',] > 20)   # the estimated p-value
 
 
@@ -149,14 +151,14 @@ mean(res$stats['longest.all',] > 20)   # the estimated p-value
 
 x_male = cousinPed(3)
 plot(x_male)
-IBDsim(x_male, sims=10, query=list('1'=15:16))
+IBDsim(x_male, sims=1, query=list('1'=15:16))
 
 # Changing the genders of the individuals connecting the cousins 
 # can have a big impact on the distribution of IBD segments:
 
 x_female = swapSex(x_male, c(3,4,7,8,11,12))
 plot(x_female)
-IBDsim(x_female, sims=10, query=list('1'=15:16))
+IBDsim(x_female, sims=1, query=list('1'=15:16))
 
 ## Given that the two third cousins have at least one segment in 
 # common, what is the expected length of this segment? We simulate 
@@ -166,7 +168,7 @@ IBDsim(x_female, sims=10, query=list('1'=15:16))
 # an average random segment).
 
 sap = list('1'=15:16)
-IBDsim(x_male, sims=10, condition=sap, query=sap)
+IBDsim(x_male, sims=1, condition=sap, query=sap)
 
 
 #### Let us look at a different relationship: Half first cousins. 
@@ -174,7 +176,7 @@ IBDsim(x_male, sims=10, condition=sap, query=sap)
 
 z = halfCousinPed(1)
 plot(z)
-res = IBDsim(z, sims=10, query=list('1'=8:9))  # more sensible: sims=1000
+res = IBDsim(z, sims=1, query=list('1'=8:9)) 
 res$stats
 
 # visualizing the spread in total IBD sharing and the number of segments:

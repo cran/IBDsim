@@ -10,7 +10,7 @@ void recombine(double *p1, int *a1, int *N1, double *p2, int *a2, int *N2, doubl
 		for(i1=0; i1 < *N1; i1++) {p3[i1] = p1[i1]; a3[i1] = a1[i1];}
 		return;
 	}
-	for(i1 = 0; (i1 < *N1) & (p1[i1] < cross[0]); i1++) {  //til første break
+    for(i1 = 0; (i1 < *N1) & (p1[i1] < cross[0]); i1++) {  //til første break
 		p3[i3] = p1[i1]; 
 		a3[i3] = a1[i1]; //Rprintf("str1, satt inn første: pos=%d,allel=%d\n",p1[i1],a1[i1]);
 		i3++;

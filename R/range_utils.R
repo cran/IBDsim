@@ -50,6 +50,6 @@ function(m, endpoint) { #m a matrix with columns start & end
   if(m[n, 2] < endpoint) {
 	newstart = c(newstart, m[n, 2]); newend = c(newend, endpoint)
   }
-  res = cbind(newstart,newend, deparse.level=0)
-  res[res[, 1] < res[, 2], ]
+  res = cbind(newstart, newend, deparse.level=0)
+  res[res[, 1] < res[, 2], , drop=F]
 }

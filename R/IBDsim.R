@@ -1,10 +1,13 @@
 IBDsim <-
-function(x, sims, query=NULL, condition=NULL, map="decode", chromosomes=1:22, model="chi", merged=TRUE, simdata=NULL, skip.recomb = "noninf_founders") {
-	if(!all(x$orig.ids==1:x$nInd)) stop("Individual ID's must be 1, 2, 3, ... . Please relabel (see e.g. ?relabel).")
+function(x, sims, query=NULL, condition=NULL, map="decode", chromosomes=1:22, 
+    model="chi", merged=TRUE, simdata=NULL, skip.recomb = "noninf_founders", verbose=TRUE) {
+	
+    if(!all(x$orig.ids==1:x$nInd)) stop("Individual ID's must be 1, 2, 3, ... . Please relabel (see e.g. ?relabel).")
 	starttime = proc.time()
 		
 	if (is.null(simdata)) {
-		cat("---------------\nPerforming", ifelse(is.null(condition),"unconditional", "conditional"), "simulation of", sims, ifelse(sims==1, "genome\n", "genomes\n"))
+		if (verbose) cat("---------------\nPerforming", ifelse(is.null(condition), "unconditional", "conditional"), 
+                         "simulation of", sims, ifelse(sims==1, "genome\n", "genomes\n"))
 		map = loadMap(map, chrom = chromosomes)
 		
 		if(!is.null(condition)) {
@@ -19,7 +22,7 @@ function(x, sims, query=NULL, condition=NULL, map="decode", chromosomes=1:22, mo
 				cafs = x$founders; if(!is.null(condition)) cafs = intersect(cafs, .CAFs(x,condition)); if(!is.null(query)) cafs = intersect(cafs, .CAFs(x,query))
 				skip.recomb = setdiff(x$founders, cafs)
 			}
-			if (length(skip.recomb)>0) cat("Skipping recombination in the following individuals:", paste(skip.recomb, collapse=", "),"\n")
+			if (length(skip.recomb)>0 && verbose) cat("Skipping recombination in the following individuals:", paste(skip.recomb, collapse=", "),"\n")
 		}
 
 		simdata = lapply(1:sims, function(i) 
@@ -28,22 +31,25 @@ function(x, sims, query=NULL, condition=NULL, map="decode", chromosomes=1:22, mo
 				genedrop(x, map=m, condition=cond, model=model, skip.recomb=skip.recomb)
 			}))
 		attr(simdata, 'total_map_length_Mb') = attr(map, "length_Mb")
-		cat("\nSimulation finished. Time used:", (proc.time()-starttime)[['elapsed']], "seconds\n---------------\n")
+		if (verbose) cat("\nSimulation finished. Time used:", 
+                         (proc.time()-starttime)[['elapsed']], "seconds\n---------------\n")
 	}
 	if(is.null(query)) return(invisible(simdata))
 	
 	coeffs = inbreeding(x); inbreds = which(coeffs>0); 
 	if(length(inbreds)>0) {
 		inb = cbind(ID=inbreds, f=coeffs[inbreds]); rownames(inb) = rep("", length(inbreds))
-		cat("\nInbreeding coefficients:\n"); print(inb)
+		if (verbose) {cat("\nInbreeding coefficients:\n"); print(inb)}
 	}
 		
 	runs <- lapply(simdata, function(h) 	sap.segments(h, sap=query))
 	attr(runs, 'total_map_length_Mb') = attr(simdata, 'total_map_length_Mb')
-	cat("\nResults:\n")
-	stats = summary.ibd(runs, merged=merged)
-	cat("\nTotal time used:", (proc.time()-starttime)[['elapsed']], "seconds.\n")
-	invisible(list(simdata=simdata, segments=runs, stats=stats))
+	
+    if (verbose) cat("\nResults:\n")
+	stats = summary.ibd(runs, merged=merged, verbose=verbose)
+	if (verbose) cat("\nTotal time used:", (proc.time()-starttime)[['elapsed']], "seconds.\n")
+	
+    invisible(list(simdata=simdata, segments=runs, stats=stats))
 }
 
 sample.obligates = function(x, condition, sims) {

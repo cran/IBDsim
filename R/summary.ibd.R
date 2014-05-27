@@ -1,5 +1,5 @@
 summary.ibd <-
-function(segments, merged=TRUE) {
+function(segments, merged=TRUE, verbose=TRUE) {
 	total = attr(segments, 'total_map_length_Mb')
 	disease = all(sapply(segments,function(r) any(r[,'disreg']==1)))
 
@@ -33,8 +33,10 @@ function(segments, merged=TRUE) {
 		stats
 	})
 	no.seg = mean(res['count.all',]==0)
-	summary = round(c(rowMeans(res), 'zeroprob' = no.seg*100), 3)
-	print(summary)
+	if (verbose) {
+        summary = round(c(rowMeans(res), 'zeroprob' = no.seg*100), 3)
+        print(summary)
+    }
 	invisible(res)
 }
 

@@ -32,11 +32,7 @@ function(map, chrom=1:23) {
 	if (any(!chrom %in% 1:23)) stop(paste("Invalid chromosome number(s):", paste(setdiff(chrom, 1:23), collapse=", ")))
 	
 	maps = switch(tolower(map), 
-	decode = {
-		data(DecodeMap)
-		DecodeMap = get("DecodeMap", pos=globalenv())  #to avoid warning during R CMD check
-		DecodeMap[chrom]
-	  }, 
+	decode = DecodeMap[chrom], 
 	uniform.sex.spec = lapply(chrom, function(chr) {dat=as.numeric(CHROM.LENGTH[chr,]); uniformMap(M=dat[1:2], Mb=dat[3], chromosome=chr)}),
 	uniform.sex.aver = lapply(chrom, function(chr) {dat=as.numeric(CHROM.LENGTH[chr,]); uniformMap(M=mean(dat[1:2]), Mb=dat[3], chromosome=chr)}),
 	stop("Invalid map name"))
@@ -56,6 +52,19 @@ function(cM_locus, mapmat) {	# mapmat matrise med kolonner 'Mb' og 'cM'
 	cm <- cM_locus[nontriv]
 	interv = findInterval(cm, mapmat[, 'cM'], all.inside=TRUE) #.findInterval_quick not allowed
 	res[nontriv] = mapmat[interv, 'Mb'] + (mapmat[interv+1, 'Mb'] - mapmat[interv, 'Mb']) * (cm - mapmat[interv, 'cM'])/(mapmat[interv+1, 'cM'] - mapmat[interv, 'cM'])
+	res
+}
+
+#25.3.2014 (not used in IBDsim)
+phys2cm <-
+function(Mb_locus, mapmat) {	# mapmat matrise med kolonner 'Mb' og 'cM'
+	last = mapmat[nrow(mapmat), ]
+	nontriv = Mb_locus >= 0 & Mb_locus <= last[['Mb']]
+	res = numeric(length(Mb_locus))
+	res[!nontriv] <- NA
+	mb <- Mb_locus[nontriv]
+	interv = findInterval(mb, mapmat[, 'Mb'], all.inside=TRUE) #.findInterval_quick not allowed
+	res[nontriv] = mapmat[interv, 'cM'] + (mapmat[interv+1, 'cM'] - mapmat[interv, 'cM']) * (mb - mapmat[interv, 'Mb'])/(mapmat[interv+1, 'Mb'] - mapmat[interv, 'Mb'])
 	res
 }
 

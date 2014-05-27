@@ -39,6 +39,14 @@ function(x, sap, loops = NULL) {  #common ancestral founders
 	paths
 }
 
+.comb2 = function(n) {
+        if (n<2) return(matrix(nrow=0, ncol=2))
+        v1 = rep.int(seq_len(n-1), (n-1):1)
+        v2 = NULL
+        for (i in 2:n) v2 = c(v2, i:n)
+        cbind(v1,v2, deparse.level=0)
+} 
+
 obligate.carriers = function(x, sap) {
 	cafs = .CAFs(x, sap)
 	cafPaths = lapply(cafs, function(caf) {
@@ -46,7 +54,7 @@ obligate.carriers = function(x, sap) {
 		twoPaths = lapply(sap[['2']], function(id) {
 			paths = .pedPaths(x, from=caf, to=id)
 			temp = list()
-			for(i in 1:nrow(loop_pairs <- paramlink:::.comb2(length(paths)))) {
+			for(i in 1:nrow(loop_pairs <- .comb2(length(paths)))) {
 				p1 = paths[[loop_pairs[i,1]]]; p2 = paths[[loop_pairs[i,2]]]
 				if(p1[length(p1) - 1] != p2[length(p2) - 1])  #true loop only if both parents of 'two' are included
 					temp = c(temp, list(c(p1, p2)))
@@ -65,13 +73,4 @@ obligate.carriers = function(x, sap) {
 		return(TRUE)
 	})
 	obligs[unlist(keep)]
-}
-
-inbreeding = function(x) {
-	ped = x$pedigree
-	kin.coeff = kinship(id=ped[,'ID'], dadid=ped[,'FID'], momid=ped[,'MID'])
-	inb.coeff = numeric()
-	inb.coeff[x$founders] = 0
-	inb.coeff[x$nonfounders] = sapply(x$nonfounders, function(i) kin.coeff[ped[i, 'FID'], ped[i, 'MID']])
-	inb.coeff
 }
