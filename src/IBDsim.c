@@ -1,30 +1,30 @@
 #include <R.h>
 #include <Rinternals.h>
-#include <Rmath.h>
+//#include <Rmath.h>
 
 void recombine(double *p1, int *a1, int *N1, double *p2, int *a2, int *N2, double *cross, int *ncross, double *p3, int *a3) {
 	int ic = 0, i1, i2 = 1, i3 = 0;
 	double cx;
 	
 	if(*ncross == 0) {
-		for(i1=0; i1 < *N1; i1++) {p3[i1] = p1[i1]; a3[i1] = a1[i1];}
+		for(i1 = 0; i1 < *N1; i1++) {p3[i1] = p1[i1]; a3[i1] = a1[i1];}
 		return;
 	}
-    for(i1 = 0; (i1 < *N1) & (p1[i1] < cross[0]); i1++) {  //til første break
+    for(i1 = 0; (i1 < *N1) && (p1[i1] < cross[0]); i1++) {  //til første break
 		p3[i3] = p1[i1]; 
-		a3[i3] = a1[i1]; //Rprintf("str1, satt inn første: pos=%d,allel=%d\n",p1[i1],a1[i1]);
+		a3[i3] = a1[i1]; //Rprintf("str1, satt inn første: pos=%f,allel=%d\n",p1[i1],a1[i1]);
 		i3++;
 	}
 	while(ic < *ncross - 1) {
 		cx = cross[ic]; //i første loop: cx er fremdeles første break
-		for(i2 = i2-1; (i2 < *N2) && (p2[i2] <= cx); i2++)  { //Rprintf("skipper str2, pos=%d\n",p2[i2]); //skip rows with pos < break (cx)
+		for(i2 = i2-1; (i2 < *N2) && (p2[i2] <= cx); i2++)  { //Rprintf("skipper str2, pos=%f\n",p2[i2]); //skip rows with pos < break (cx)
 		}
 		p3[i3] = cx;   
 		a3[i3] = a2[i2-1];
-		i3++; //Rprintf("str2, satt inn cx=%d,allel=%d\n",cx,a2[i2-1]);
+		i3++; //Rprintf("str2, satt inn cx=%f,allel=%d\n",cx,a2[i2-1]);
 		
 		cx = cross[ic+1];  //set next break point
-		for(i2 = i2; (i2 < *N2) && (p2[i2] < cx); i2++) { //Rprintf("str2, setter inn pos=%d,allel=%d\n",p2[i2],a2[i2]);
+		for(i2 = i2; (i2 < *N2) && (p2[i2] < cx); i2++) { //Rprintf("str2, setter inn pos=%f,allel=%d\n",p2[i2],a2[i2]);
 			p3[i3] = p2[i2]; 
 			a3[i3] = a2[i2]; 
 			i3++;
@@ -32,33 +32,36 @@ void recombine(double *p1, int *a1, int *N1, double *p2, int *a2, int *N2, doubl
 		
 		for(i1 = i1-1; (i1 < *N1) && (p1[i1] <= cx); i1++)  {}
 		p3[i3] = cx;   
-		a3[i3] = a1[i1-1];		//Rprintf("str1, satt inn cx=%d,allel=%d\n",cx,a1[i1-1]);
+		a3[i3] = a1[i1-1];	//Rprintf("str1, satt inn cx=%f,allel=%d\n",cx,a1[i1-1]);
 		i3++;
-		cx = cross[ic+2];  //set next break point
-		for(i1 = i1; (i1 < *N1) && (p1[i1] < cx); i1++) {//Rprintf("str1, setter inn pos=%d,allel=%d\n",p1[i1],a1[i1]);
-			p3[i3] = p1[i1]; 
-			a3[i3] = a1[i1]; 
-			i3++;
-		}
-		ic+=2;
+		
+        if(ic < *ncross - 2) {
+            for(i1 = i1; (i1 < *N1) && (p1[i1] < cross[ic+2]); i1++) { 
+                p3[i3] = p1[i1]; 
+                a3[i3] = a1[i1]; //Rprintf("str1, setter inn pos=%f,allel=%d\n",p1[i1],a1[i1]);
+                i3++;
+            }
+        }
+        
+		ic += 2;
 	}
 	if(ic == *ncross - 1) {
 		cx = cross[ic];  //siste break
 		for(i2 = i2-1; (i2 < *N2) && (p2[i2] <= cx); i2++)  {} //skip rows with pos < break (cx)
 		p3[i3] = cx;   
 		a3[i3] = a2[i2-1];
-		i3++;  //Rprintf("str2, satt inn siste break, cx=%d,allel=%d\n",cx,a2[i2-1]);
+		i3++;  //Rprintf("str2, satt inn siste break, cx=%f,allel=%d\n",cx,a2[i2-1]);
 		for(i2 = i2; i2 < *N2; i2++) {
 			p3[i3] = p2[i2]; 
 			a3[i3] = a2[i2]; 
-			i3++;  //Rprintf("str2, satt inn siste: pos=%d,allel=%d\n",p2[i2],a2[i2]);
+			i3++;  //Rprintf("str2, satt inn siste: pos=%f,allel=%d\n",p2[i2],a2[i2]);
 		}
-	}
+    }
 	else {
 		for(i1 = i1; i1 < *N1; i1++) {
 			p3[i3] = p1[i1]; 
 			a3[i3] = a1[i1]; 
-			i3++; //Rprintf("str1, satt inn siste: pos=%d,allel=%d\n",p1[i1],a1[i1]);
+			i3++; //Rprintf("str1, satt inn siste: pos=%f,allel=%d\n",p1[i1],a1[i1]);
 		}
 	}
 }

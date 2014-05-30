@@ -14,7 +14,7 @@ function(x, sims, query=NULL, condition=NULL, map="decode", chromosomes=1:22,
 			if(length(map)==1) dischr = rep.int(attr(map[[1]], 'chromosome'), sims)
 			else dischr = sample(sapply(map, attr, 'chromosome'), size=sims, replace=T, prob=sapply(map, attr, 'length_Mb'))
 			oblig.saps = sample.obligates(x, condition, sims)
-		}
+        }
 		else {dischr=rep.int(0, sims)}
 	
 		if(!is.null(skip.recomb)) {
@@ -27,8 +27,8 @@ function(x, sims, query=NULL, condition=NULL, map="decode", chromosomes=1:22,
 
 		simdata = lapply(1:sims, function(i) 
 			lapply(map, function(m) {
-				if(dischr[sims]==attr(m, 'chromosome')) cond=oblig.saps[[i]] else cond=NULL 
-				genedrop(x, map=m, condition=cond, model=model, skip.recomb=skip.recomb)
+				if(dischr[sims]==attr(m, 'chromosome')) cond=oblig.saps[[i]] else cond=NULL
+                genedrop(x, map=m, condition=cond, model=model, skip.recomb=skip.recomb)
 			}))
 		attr(simdata, 'total_map_length_Mb') = attr(map, "length_Mb")
 		if (verbose) cat("\nSimulation finished. Time used:", 

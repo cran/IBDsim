@@ -26,7 +26,7 @@ Single allele patterns (SAPs), described as lists with numerical entries named "
 The genetic map(s) to be used in the simulations: One of the character strings "decode", "uniform.sex.spec", "uniform.sex.aver". (See Details.)
 }
   \item{chromosomes}{
-A numeric indicating chromosome numbers. The default is 1, 2, ..., 22, i.e. all autosomes.
+A numeric indicating chromosome numbers. The default is 1:22, i.e. the human autosomes.
 }
   \item{model}{
 A character indicating the statistical model for recombination: Either "chi" (the default) or "haldane". (See details.)
@@ -121,6 +121,7 @@ plot(x)
 
 sap1 = list('2'=15:16, 'atmost1'=17)
 IBDsim(x, sims=1, condition=sap1, query=sap1)
+
 # If 16 is unavailable, his parents and healthy sibling are still 
 # informative. The regions we are looking for now are those with 
 # an allele present in 2 copies in 15, 1 copy in 12 and 14, and 

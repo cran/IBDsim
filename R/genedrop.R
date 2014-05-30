@@ -60,7 +60,7 @@ function(dis.al, dis.locus, parental.haplos, carry_code) { #carry_code = 1 (0 di
 	f = 1; a = 2; nocond = 3; co = c(nocond,nocond)   #f = "force"; a = "avoid"
 	err = function() stop("Impossible condition.")
 	
-	if(fa==0 && mo==0) switch(carry_code, NULL, err(), err(), NULL)
+    if(fa==0 && mo==0) switch(carry_code, NULL, err(), err(), NULL)
 	else if(fa==1 && mo==0) switch(carry_code, co[1]<-a, co[1]<-f, err(), co[1]<-sample.int(2,1))
 	else if(fa==0 && mo==1) switch(carry_code, co[2]<-a, co[2]<-f, err(), co[2]<-sample.int(2,1))
 	else if(fa==2 && mo==0) switch(carry_code, err(), NULL, err(), NULL)

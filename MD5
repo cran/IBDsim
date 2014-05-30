@@ -1,7 +1,7 @@
-eba272d8c9e9019ab418d6545cd5b9c8 *DESCRIPTION
+bf39465ee1386232d6a66e06b7bbab8a *DESCRIPTION
 9ec8876b56497a0cda287e8f5b565ba5 *NAMESPACE
-41cec6f3f22e881b44ee91745667549b *R/IBDsim.R
-ce385a8138f717ccc8b698703541ff5a *R/genedrop.R
+cbcdf8e1bd5f56c069d2586f975cfbda *R/IBDsim.R
+4714202014a87ccf24d9f4e8ec69881c *R/genedrop.R
 4c509f14c25ef293b64374731d2d1e07 *R/ibd.runs.R
 427686ece3db309a66a8d093b57ca435 *R/map_utils.R
 63faa2cbc311ceb00193f9e222a9eb03 *R/meiosis.R
@@ -12,6 +12,6 @@ bd2f389f1bc5148432c793c4c992f2b7 *data/DecodeMap.rda
 3bb9e9c5b3af7dcc339aac8ca51bd80e *data/datalist
 cc6a878291fd150988efc0c86ff559eb *data/dominant1.rda
 19402f4e9389ddd18f7bf398f369a5d0 *man/DecodeMap.Rd
-09e25bee37c037c9b27611abd4101c97 *man/IBDsim.Rd
+11d8db9bde45757b13d532e5d3a65c42 *man/IBDsim.Rd
 e0e12258ecea4ea9c0c59300ca63bb47 *man/dominant1.Rd
-76069d72eb3c1f457b123672d82aa149 *src/IBDsim.c
+bf0d51ead6e82103f66139551f3c3467 *src/IBDsim.c
