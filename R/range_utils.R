@@ -1,6 +1,6 @@
 rangeUnion <-
 function(x) {
-  nrws = unlist(lapply(x, length), recursive=TRUE, use.names=FALSE)/2
+  nrws = lengths(x, use.names=FALSE)/2
   if (sum(nrws)==0) return(matrix(numeric(0), ncol=2))
   
   n = length(nrws)
@@ -20,7 +20,7 @@ function(x) {
 
 rangeIntersect <-
 function(x) {
-  nrws = unlist(lapply(x, length), recursive=TRUE, use.names=FALSE)/2
+  nrws = lengths(x, use.names=FALSE)/2
   if (sum(nrws)==0) return(matrix(numeric(0), ncol=2))
   
   n = length(nrws)

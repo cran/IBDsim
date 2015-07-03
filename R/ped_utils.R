@@ -10,7 +10,7 @@ function(x, sap, loops = NULL) {  #common ancestral founders
 	if(length(twos)>0) {
 		.ancestral.founders = function(id)	if (id %in% fou) return(id) else fou[sapply(fou_desc, function(ds) id %in% ds)]
 		if(is.null(loops)) loops = pedigreeLoops(x)
-		if(length(loops) == 0) return(numeric())  #NB: 1)pedigreeLoops bruker originale ids 2) veldig ineffektivt (men selv telemark går på noen sekunder)
+		if(length(loops) == 0) return(numeric())  #NB: 1)pedigreeLoops uses original ids 2) very inefficient, but fast enough
 		bottoms = sapply(loops, '[[', 'bottom') 
 		tops = sapply(loops, '[[', 'top')
 		for (bot in twos) caf = intersect(caf, unlist(lapply(tops[bottoms==bot], .ancestral.founders)))

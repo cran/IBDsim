@@ -32,7 +32,7 @@ function(map, chrom=1:23) {
 	if (any(!chrom %in% 1:23)) stop(paste("Invalid chromosome number(s):", paste(setdiff(chrom, 1:23), collapse=", ")))
 	
 	maps = switch(tolower(map), 
-	decode = DecodeMap[chrom], 
+	decode = IBDsim::DecodeMap[chrom], 
 	uniform.sex.spec = lapply(chrom, function(chr) {dat=as.numeric(CHROM.LENGTH[chr,]); uniformMap(M=dat[1:2], Mb=dat[3], chromosome=chr)}),
 	uniform.sex.aver = lapply(chrom, function(chr) {dat=as.numeric(CHROM.LENGTH[chr,]); uniformMap(M=mean(dat[1:2]), Mb=dat[3], chromosome=chr)}),
 	stop("Invalid map name"))
