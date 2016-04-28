@@ -1,6 +1,6 @@
 importFrom("stats", "rpois", "runif")
 import("paramlink")
 
-export(IBDsim)
+export(IBDsim, twoLocusIBD)
 
 useDynLib("IBDsim")

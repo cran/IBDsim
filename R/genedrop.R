@@ -1,16 +1,21 @@
 genedrop <-
 function(x, map, condition=NULL, model="chi", skip.recomb=NULL) { #x=linkdat object
-	ped = x$pedigree; chrom = x$model$chrom
-	h = distribute.founder.alleles(x, chrom)
-	
+	ped = x$pedigree
+    chrom = attr(map, "chromosome")
+    #if(chrom==23) chrom="X"
+    #if(!is.null(x$model$chrom) && chrom != x$model$chrom) stop(sprintf("Map chromosome = %s, but disease model chromosome = %s.", chrom, x$model$chrom))
+    
+    h = distribute.founder.alleles(x, chrom)
+	nonfounders.order = dropping.order(x)
+    
 	if(is.null(condition)) {
-		if(is.null(chrom) || chrom=="AUTOSOMAL")
-			for (i in x$nonfounders) {
-				parents = ped[i, c('FID', 'MID')]
+		if(chrom < 23)
+			for (i in nonfounders.order) {
+                parents = ped[i, c('FID', 'MID')]
 				h[[i]] = lapply(1:2, function(k) meiosis(h[[ parents[k] ]], map=map[[k]], model=model, skip.recomb=parents[k] %in% skip.recomb))
 			}
-		else if(chrom=="X")
-			for (i in x$nonfounders) {
+		else if(chrom==23)
+			for (i in nonfounders.order) {
 				father = ped[i, 'FID']; mother = ped[i, 'MID']
 				maternal.gamete = meiosis(h[[mother]], map=map$female, model=model, skip.recomb=mother %in% skip.recomb)
 				if(ped[i,'SEX']==1) 	h[[i]] = list(maternal.gamete, maternal.gamete)
@@ -26,8 +31,8 @@ function(x, map, condition=NULL, model="chi", skip.recomb=NULL) { #x=linkdat obj
 	
 		carry_code = lapply(ped[,'ID'], function(j) match(T, c(j %in% zero, j %in% one, j %in% two, j %in% atm1), nomatch=5))
 		COND = list(c(locus = dis.locus, allele = dis.al, action = 1), c(locus = dis.locus, allele = dis.al, action = 2), NULL) #action: 1=force; 2=avoid
-		if(is.null(chrom) || chrom=="AUTOSOMAL")
-			for (i in x$nonfounders) {
+		if(chrom < 23)
+            for (i in nonfounders.order) {
 				parents = ped[i, c('FID', 'MID')]; skip = parents %in% skip.recomb;	
 				condits = COND[.decide_action(dis.al, dis.locus, h[parents], carry_code[[i]])] #returns list of 2 elements
 				h[[i]] = lapply(1:2, function(k) 
@@ -36,13 +41,32 @@ function(x, map, condition=NULL, model="chi", skip.recomb=NULL) { #x=linkdat obj
 		else stop("X-linked conditional genedrop is not implemented yet.")
 		attr(h, 'dis.locus') = dis.locus; attr(h, 'dis.allele') = dis.al
 	}
-	attr(h, "length_Mb") <- attr(map, "length_Mb");	attr(h, "chromosome") <- attr(map, "chromosome") 
+	attr(h, "length_Mb") <- attr(map, "length_Mb");	attr(h, "chromosome") <- chrom
 	h
 }
 
-distribute.founder.alleles = function(x, chrom=x$model$chrom) {
+dropping.order = function(x) {
+    # output: vector of all nonfounders, ordered such that children always come after their parents.
+    taken = x$founders
+    remaining = x$nonfounders
+    while(length(remaining) > 0)
+        for(k in seq_along(remaining)) {
+            id = remaining[k]
+            if(all(parents(x, id) %in% taken)) {
+                taken = c(taken, id)
+                remaining = remaining[-k]
+                break
+            }
+        }
+    setdiff(taken, x$founders)
+}
+
+distribute.founder.alleles = function(x, chrom="AUTOSOMAL") {
 	ped = x$pedigree; fou = x$founders; h = vector("list", x$nInd)
-	if(is.null(chrom) || chrom=="AUTOSOMAL")
+	if(is.null(chrom)) chrom="AUTOSOMAL"
+    if(is.numeric(chrom)) chrom=ifelse(chrom<23, "AUTOSOMAL", "X")
+    
+    if(chrom=="AUTOSOMAL")
 		aux = cbind(rep.int(0, 2*length(fou)), seq_len(2*length(fou)))
 	else {
 		alleles = numeric(nfou <- length(fou)); k=1; 
@@ -73,7 +97,7 @@ function(dis.al, dis.locus, parental.haplos, carry_code) { #carry_code = 1 (0 di
 }
 
 getLocus = function(x, h, locus) {
-	marker = t(sapply(h, .getAlleles, posvec=locus))
+	marker = t.default(sapply(h, .getAlleles, posvec=locus))
 	setMarkers(x, marker)
 }
 

@@ -1,0 +1,8 @@
+NEWS FILE FOR PACKAGE IBDSIM
+
+2016-26-04: Version 0.9-6
+   * New function: twoLocusIBD().
+   
+   * Fixed bug in IBDsim() related to pedigree member ordering.
+
+   * Minor improvements and typo corrections.
