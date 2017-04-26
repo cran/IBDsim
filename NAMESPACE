@@ -1,6 +1,6 @@
 importFrom("stats", "rpois", "runif")
 import("paramlink")
 
-export(IBDsim, twoLocusIBD)
+export(IBDsim, alleleSummary, oneLocusIBD, twoLocusIBD, oneLocusJacquard, twoLocusJacquard)
 
-useDynLib("IBDsim")
+useDynLib("IBDsim", .registration=TRUE)

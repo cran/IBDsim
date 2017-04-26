@@ -46,12 +46,68 @@ function(x, sap) {#x a list of haplo-objects (i.e. each element is a list of two
 	res
 }
 
+### not used!
+# ibd.finder.ordered <-
+# function(x, ibd.ordered, nonibd.ordered) {
+    # # x: single sim of a single chrom, all indivs. A list of haplo-objects (i.e. each element is a list of two matrices)
+    # # ibd: vector of signed ID integers. +/- = paternal/maternal. 
+    # # Example: ibd = c(3,-4) ---> (paternal of ind 3 == maternal of ind 4 signed)
+	# all.conditions = c(ibd.ordered, nonibd.ordered)
+    # stopifnot(all(sapply(all.conditions, length) >= 2))
+    # ids = sort.int(unique.default(abs(unlist(all.conditions))))
+    # haplos = unlist(x[ibd], recursive=FALSE)
+    # breaks = unlist(lapply(haplos, function(m) m[-1,1]))
+	# breaks = c(0, .sortDouble(breaks[!duplicated(breaks)]))
+    # alleles = do.call(cbind, lapply(haplos, pos2allele, posvec=breaks))
+    # colnames(alleles) = paste0(c("","-"), rep(ids, each=2))
+    
+    # test = rep(T, length(breaks))
+    # for(vec in ibd.ordered) {
+        # this_alleles = alleles[, as.character(vec)]
+        # test = test & rowSums(this_alleles - this_alleles[, 1]) == 0
+    # }
+    # for(vec in nonibd.ordered) {
+        # this_alleles = alleles[, as.character(vec)]
+        # test = test & rowSums(abs(this_alleles - this_alleles[, 1])) > 0
+    # }
+    # stops = c(breaks[-1], attr(x, 'length_Mb'))
+    # chrom = rep.int(attr(x, 'chromosome'), sum(test))
+    # disreg = rep.int(0, sum(test)) # Dont want/need this? To make sure downstream summary stuff works...
+    # cbind(chrom=chrom, start=breaks[test], end=stops[test], alleles[test, , drop=F], disreg=disreg)
+# }
+
+### not used!!!
+# ibd.status <-
+# function(x, id.pair) {
+    # # x: single sim of a single chrom, all indivs. A list of haplo-objects (i.e. each element is a list of two matrices)
+    # haplos = unlist(x[id.pair], recursive=FALSE)
+    # breaks = unlist(lapply(haplos, function(m) m[-1,1]))
+	# breaks = c(0, .sortDouble(breaks[!duplicated(breaks)]))
+    # alleles_list = lapply(haplos, pos2allele, posvec=breaks)
+    
+    # ibd_pp = alleles_list[[1]] == alleles_list[[3]]
+    # ibd_pm = alleles_list[[1]] == alleles_list[[4]]
+    # ibd_mp = alleles_list[[2]] == alleles_list[[3]]
+    # ibd_mm = alleles_list[[2]] == alleles_list[[4]]
+    # ibd = (ibd_pp | ibd_pm) + (ibd_mp | ibd_mm) 
+    
+    # starts = breaks
+    # stops = c(breaks[-1], attr(x, 'length_Mb'))
+    # alleles_matrix = do.call(cbind, alleles_list)
+    # colnames(alleles_matrix) = paste0(rep(id.pair, each=2), c("p","m"))
+    # chrom = rep.int(attr(x, 'chromosome'), length(breaks))
+    
+    # cbind(chrom=chrom, start=starts, end=stops, length=stops-starts, alleles_matrix, ibd=ibd, ibd_pp=ibd_pp, ibd_pm=ibd_pm, ibd_mp=ibd_mp, ibd_mm=ibd_mm)
+# }
 
 .getAlleles = function(chromdata, posvec) {
-	str1 = chromdata[[1]]; str2 = chromdata[[2]]
-	posvec[posvec<0]=0
-    index1 = findInterval(posvec, str1[,1])
-    index2 = findInterval(posvec, str2[,1])
-    rbind(str1[index1, 2], str2[index2, 2])
+    posvec[posvec<0] = 0
+    rbind(pos2allele(chromdata[[1]], posvec),
+          pos2allele(chromdata[[2]], posvec))
 }
 
+
+pos2allele = function(haplo, posvec) { # haplo = matrix with 2 columns (breaks - allele)
+	indices = findInterval(posvec, haplo[, 1])
+    haplo[indices, 2]
+}

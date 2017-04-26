@@ -86,10 +86,10 @@ function(Mb_locus, mapmat) {    # mapmat matrise med kolonner 'Mb' og 'cM'
         # PACKAGE = "base")$index
 # }
 
-.genmapC <-
-function(cM, mapmat) {    # mapmat matrise med kolonner 'pos' og 'cM'   ###NB gammel!!
-    map_phys = as.double(mapmat[,1])
-    map_cm = as.double(mapmat[,2])
-    n = length(cM)
-    .C("geneticMap", map_phys, map_cm, cM, n, res=numeric(n), PACKAGE="IBDsim")$res
-}
+# .genmapC <-
+# function(cM, mapmat) {    # mapmat matrise med kolonner 'pos' og 'cM'   ###NB gammel!!
+#     map_phys = as.double(mapmat[,1])
+#     map_cm = as.double(mapmat[,2])
+#     n = length(cM)
+#     .C("geneticMap", map_phys, map_cm, cM, n, res=numeric(n), PACKAGE="IBDsim")$res
+# }

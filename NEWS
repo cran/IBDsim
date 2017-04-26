@@ -1,5 +1,14 @@
 NEWS FILE FOR PACKAGE IBDSIM
 
+2017-25-04: Version 0.9-7
+   * New function alleleSummary() which greatly facilitates downstream analysis.
+   
+   * New function oneLocusIBD() complementing twoLocusIBD().
+   
+   * New functions oneLocusJacquard() and twoLocusJacquard().
+   
+   * Added file "scr/init.c" to avoid complaints from 'R CMD check' about no calls to 'R_registerRoutines' and 'R_useDynamicSymbols'
+
 2016-26-04: Version 0.9-6
    * New function: twoLocusIBD().
    
