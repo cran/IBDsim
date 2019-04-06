@@ -1,5 +1,8 @@
 NEWS FILE FOR PACKAGE IBDSIM
 
+2019-06-04: Version 0.9-8
+   * Fix problem related to changes in R's random number generatation.
+   
 2017-25-04: Version 0.9-7
    * New function alleleSummary() which greatly facilitates downstream analysis.
    

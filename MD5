@@ -1,6 +1,6 @@
-368e9f11549eff1f42b4379192059d8e *DESCRIPTION
+d8dbbae9d45312bf52f5ff7e637f13f0 *DESCRIPTION
 b38cb56424fb4a863f46b9b0b6d1221f *NAMESPACE
-b2007066daa6267a244b7de36dbb0dda *NEWS
+48a4cde994c846dba55aff9a9b55604d *NEWS
 5248cb9c14e6cac955e93b8f707c2c24 *R/IBDsim.R
 7f099835505ceac23db8fc1aa70f4cb5 *R/alleleSummary.R
 4194a8ccc7f1c78cacad275c4ea30587 *R/genedrop.R
@@ -18,9 +18,9 @@ daa87449fb92aa7c45614e272f590b1c *data/dominant1.rda
 1acc62fdd9cdf8824128732e08ba1738 *man/IBDsim.Rd
 2e3fe3d95ee6c1982ec579c5ee8623fd *man/alleleSummary.Rd
 e0e12258ecea4ea9c0c59300ca63bb47 *man/dominant1.Rd
-1eb84641e7bec8a99f431ca273bcbd48 *man/oneLocusIBD.Rd
-50462664a3a9445e02df7a9f3bc4ff28 *man/oneLocusJacquard.Rd
+3951fe2588990faf69b724a3bdc98128 *man/oneLocusIBD.Rd
+292e64772ffcc856bd87a391e4597b62 *man/oneLocusJacquard.Rd
 415aa2ce7969cbff6cf5cf3979681a02 *man/twoLocusIBD.Rd
 59eb3dabfc023a8038c45e6f153fdc0e *man/twoLocusJacquard.Rd
-bf0d51ead6e82103f66139551f3c3467 *src/IBDsim.c
+14f3573a07f2c622549e584d33c1faa8 *src/IBDsim.c
 7a06a4081e4621c64713bdcdb3936db7 *src/init.c

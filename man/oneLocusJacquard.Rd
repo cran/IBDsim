@@ -45,13 +45,13 @@ x = fullSibMating(generations=2)
 Nsim = 100 # (increase to improve accuracy) 
 
 # Estimating the 9 identity coefficients
-j_est = oneLocusJacquard(x, ind1=5, ind2=6, Nsim=Nsim, seed=123)
+j_est = oneLocusJacquard(x, ind1=5, ind2=6, Nsim=Nsim)
 
-# Exact values (requires the "identity" package)
-\dontrun{j_exact = jacquard(x, 5:6)}
+# Exact: c(2,1,4,1,4,1,7,10,2)/32
 
-j_exact = c(2,1,4,1,4,1,7,10,2)/32
-
-stopifnot(all(round(j_est - j_exact, 1) == 0))
+# With the "identity" package:
+\dontrun{
+  j_exact = jacquard(x, 5:6)
+}
 }
 \keyword{ math }
